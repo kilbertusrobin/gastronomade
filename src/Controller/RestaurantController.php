@@ -37,5 +37,18 @@ class RestaurantController extends AbstractController
         return $this->restaurantService->createRestaurant($data);
     }
 
+    #[Route('/{id}/update', name: 'update', methods: ['PUT'])]
+    public function update(int $id, Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        return $this->restaurantService->updateRestaurant($id, $data);
+    }
+
+    #[Route('/{id}/delete', name: 'delete', methods: ['DELETE'])]
+    public function delete(int $id): JsonResponse
+    {
+        return $this->restaurantService->deleteRestaurant($id);
+    }
+
     
 }
