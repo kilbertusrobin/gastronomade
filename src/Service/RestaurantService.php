@@ -5,7 +5,6 @@ namespace App\Service;
 use App\Repository\RestaurantRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Serializer\Annotation\Groups;
 
 class RestaurantService
 {
@@ -25,4 +24,26 @@ class RestaurantService
         return new JsonResponse($data, 200, [], true);
     }
     
+    public function getRestaurantById(int $id): JsonResponse
+    {
+        $restaurant = $this->restaurantRepository->find($id);
+    
+        if (!$restaurant) {
+            return new JsonResponse(['error' => 'Restaurant not found'], 404);
+        }
+    
+        $data = $this->serializer->serialize($restaurant, 'json');
+        return new JsonResponse($data, 200, [], true);
+    }
+
+    public function createRestaurant(array $data): JsonResponse
+    {
+        if (isset($data['id']) && $this->restaurantRepository->findBy($data['id'])) {
+            return new JsonResponse(['error' => 'Restaurant with this ID already exists'], 400);
+        }
+
+        $restaurant = $this->restaurantRepository->createRestaurant($data);
+        $data = $this->serializer->serialize($restaurant, 'json');
+        return new JsonResponse($data, 201, [], true);
+    }
 }
