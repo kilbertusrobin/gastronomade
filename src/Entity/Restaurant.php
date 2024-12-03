@@ -3,6 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\RestaurantRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use JMS\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: RestaurantRepository::class)]
@@ -11,27 +14,35 @@ class Restaurant
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['list_restaurant'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['list_restaurant'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['list_restaurant'])]
     private ?string $city = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['list_restaurant'])]
     private ?string $postalCode = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['list_restaurant'])]
     private ?string $adress = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['list_restaurant'])]
     private ?string $phone = null;
 
     #[ORM\Column]
+    #[Groups(['list_restaurant'])]
     private ?float $lat = null;
 
-    #[ORM\Column]
+        #[ORM\Column]
+        #[Groups(['list_restaurant'])]
     private ?float $longitude = null;
 
     public function getId(): ?int

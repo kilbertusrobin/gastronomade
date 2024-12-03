@@ -17,7 +17,7 @@ class RestaurantController extends AbstractController
         $this->restaurantService = $restaurantService;
     }
 
-    #[Route('/list', name: 'index', methods: ['GET'])]
+    #[Route('', name: 'index', methods: ['GET'])]
     public function index(): JsonResponse
     {
         return $this->restaurantService->getRestaurants();
