@@ -6,9 +6,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
+#[Route('/api/restaurant', name: 'app_restaurant-')]
 class RestaurantController extends AbstractController
 {
-    #[Route('/restaurant', name: 'app_restaurant')]
+    #[Route('', name: 'index', methods: ['GET'])]
     public function index(): JsonResponse
     {
         return $this->json([
