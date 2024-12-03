@@ -93,4 +93,47 @@ class UserService
     
         return new JsonResponse(['message' => 'User created'], 201);
     }
+
+    public function updateUser($id, $data): JsonResponse
+    {
+        $user = $this->userRepository->findOneBy(['id' => $id]);
+    
+        if (!$user) {
+            return new JsonResponse(['message' => 'User not found'], 404);
+        }
+    
+        $user->setFirstName($data['firstName']);
+        $user->setLastName($data['lastName']);
+        $user->setEMail($data['eMail']);
+        $user->setUserName($data['userName']);
+        if (isset($data['password'])) {
+            $user->setPassword($data['password']);
+        } else {
+            $user->setPassword($user->getPassword());
+        }
+    
+        $typeUser = $this->entityManager->getRepository(TypeUser::class)->findOneBy(['id' => $data['typeUserId']]);
+        if (!$typeUser) {
+            return new JsonResponse(['message' => 'TypeUser not found'], 404);
+        }
+        $user->setTypeUser($typeUser);
+    
+        $this->entityManager->flush();
+    
+        return new JsonResponse(['message' => 'User updated'], 200);
+    }
+
+    public function deleteUser($id): JsonResponse
+    {
+        $user = $this->userRepository->findOneBy(['id' => $id]);
+    
+        if (!$user) {
+            return new JsonResponse(['message' => 'User not found'], 404);
+        }
+    
+        $this->entityManager->remove($user);
+        $this->entityManager->flush();
+    
+        return new JsonResponse(['message' => 'User deleted'], 200);
+    }
 }

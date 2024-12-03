@@ -37,4 +37,20 @@ class UserController extends AbstractController
         $data = json_decode($request->getContent(), true);
         return $this->userService->createUser($data);
     }
+
+    #[Route('/update/{id}', name: 'update', methods: ['PUT'])]
+    public function update(Request $request): JsonResponse
+    {
+        $id = $request->get('id');
+        $data = json_decode($request->getContent(), true);
+        return $this->userService->updateUser($id, $data);
+    }
+
+    #[Route('/delete/{id}', name: 'delete', methods: ['DELETE'])]
+    public function delete(Request $request): JsonResponse
+    {
+        $id = $request->get('id');
+        return $this->userService->deleteUser($id);
+    }
+
 }
