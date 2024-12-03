@@ -3,6 +3,9 @@
 namespace App\Service;
 
 use App\Repository\UserRepository;
+use App\Entity\User;
+use App\Entity\TypeUser;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -11,13 +14,16 @@ class UserService
 {
     private $userRepository;
     private $serializer;
+    private $entityManager;
 
-    public function __construct(UserRepository $userRepository, SerializerInterface $serializer)
+    public function __construct(UserRepository $userRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager)
     {
         $this->userRepository = $userRepository;
         $this->serializer = $serializer;
+        $this->entityManager = $entityManager;
     }
 
+    #[Groups(['list_users'])]
     public function getUsers(): JsonResponse
     {
         $users = $this->userRepository->findAll();
@@ -37,7 +43,7 @@ class UserService
             ];
         }
     
-        $data = $this->serializer->serialize($userData, 'json');
+        $data = $this->serializer->serialize($userData, 'json', ['groups' => 'list_users']);
     
         return new JsonResponse($data, 200, [], true);
     }
@@ -74,12 +80,17 @@ class UserService
         $user->setLastName($data['lastName']);
         $user->setEMail($data['eMail']);
         $user->setUserName($data['userName']);
-        $user->setTypeUser($data['typeUser']);
+        $user->setPassword($data['password']);
+        
+        $typeUser = $this->entityManager->getRepository(TypeUser::class)->findOneBy(['id' => $data['typeUserId']]);
+        if (!$typeUser) {
+            return new JsonResponse(['message' => 'TypeUser not found'], 404);
+        }
+        $user->setTypeUser($typeUser);
     
-        $this->userRepository->persist($user);
-        $this->userRepository->flush();
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
     
         return new JsonResponse(['message' => 'User created'], 201);
     }
-       
 }
