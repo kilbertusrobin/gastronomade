@@ -53,4 +53,10 @@ class UserController extends AbstractController
         return $this->userService->deleteUser($id);
     }
 
+    #[Route('/login', name: 'login', methods: ['POST'])]
+    public function login(Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        return $this->userService->login($data);
+    }
 }
