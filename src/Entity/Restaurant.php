@@ -45,6 +45,17 @@ class Restaurant
         #[Groups(['list_restaurant'])]
     private ?float $longitude = null;
 
+        /**
+         * @var Collection<int, FlagshipDish>
+         */
+        #[ORM\OneToMany(targetEntity: FlagshipDish::class, mappedBy: 'restaurant')]
+        private Collection $flagshipDishes;
+
+        public function __construct()
+        {
+            $this->flagshipDishes = new ArrayCollection();
+        }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -130,6 +141,36 @@ class Restaurant
     public function setLongitude(float $longitude): static
     {
         $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, FlagshipDish>
+     */
+    public function getFlagshipDishes(): Collection
+    {
+        return $this->flagshipDishes;
+    }
+
+    public function addFlagshipDish(FlagshipDish $flagshipDish): static
+    {
+        if (!$this->flagshipDishes->contains($flagshipDish)) {
+            $this->flagshipDishes->add($flagshipDish);
+            $flagshipDish->setRestaurant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFlagshipDish(FlagshipDish $flagshipDish): static
+    {
+        if ($this->flagshipDishes->removeElement($flagshipDish)) {
+            // set the owning side to null (unless already changed)
+            if ($flagshipDish->getRestaurant() === $this) {
+                $flagshipDish->setRestaurant(null);
+            }
+        }
 
         return $this;
     }

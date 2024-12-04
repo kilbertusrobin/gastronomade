@@ -24,7 +24,6 @@ class AvisService
         $this->entityManager = $entityManager;
     }
 
-    #[Groups(['list_avis'])]
     public function getAvis(): JsonResponse
     {
         $avisList = $this->avisRepository->findAll();

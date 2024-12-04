@@ -26,7 +26,6 @@ class UserService
         $this->passwordHasher = $passwordHasher;
     }
 
-    #[Groups(['list_users'])]
     public function getUsers(): JsonResponse
     {
         $users = $this->userRepository->findAll();
