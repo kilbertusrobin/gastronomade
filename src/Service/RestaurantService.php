@@ -22,7 +22,6 @@ class RestaurantService
         $this->entityManager = $entityManager;
     }
 
-    #[Groups(['list_restaurants'])]
     public function getRestaurants(): JsonResponse
     {
         $restaurants = $this->restaurantRepository->findAll();
@@ -54,6 +53,16 @@ class RestaurantService
             return new JsonResponse(['message' => 'Restaurant not found'], 404);
         }
     
+        $flagshipDishes = $restaurant->getFlagshipDishes()->toArray();
+        $flagshipDishesData = array_map(function ($dish) {
+            return [
+                'id' => $dish->getId(),
+                'label' => $dish->getLabel(),
+                'description' => $dish->getDescription(),
+                'photo' => $dish->getPhoto(),
+            ];
+        }, $flagshipDishes);
+    
         $restaurantData = [
             'id' => $restaurant->getId(),
             'name' => $restaurant->getName(),
@@ -63,12 +72,14 @@ class RestaurantService
             'phone' => $restaurant->getPhone(),
             'lat' => $restaurant->getLat(),
             'longitude' => $restaurant->getLongitude(),
+            'flagshipDishes' => $flagshipDishesData,
         ];
     
         $data = $this->serializer->serialize($restaurantData, 'json');
     
         return new JsonResponse($data, 200, [], true);
     }
+    
 
     public function createRestaurant(array $data): JsonResponse
     {
