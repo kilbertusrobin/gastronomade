@@ -83,4 +83,48 @@ class FlagshipService
     
         return new JsonResponse(null, 204);
     }
+
+    public function createFlagshipDish(array $data): JsonResponse
+    {
+        $restaurant = $this->entityManager->getRepository(Restaurant::class)->findOneBy(['id' => $data['restaurant']]);
+    
+        if (!$restaurant) {
+            return new JsonResponse(['message' => 'Restaurant not found'], 404);
+        }
+    
+        $flagshipDish = new FlagshipDish();
+        $flagshipDish->setLabel($data['label']);
+        $flagshipDish->setDescription($data['description']);
+        $flagshipDish->setPhoto($data['photo']);
+        $flagshipDish->setRestaurant($restaurant);
+    
+        $this->entityManager->persist($flagshipDish);
+        $this->entityManager->flush();
+    
+        return new JsonResponse(['message' => 'Flagship created'], 201);
+    }
+
+    public function updateFlagshipDish(array $data, $id): JsonResponse
+    {
+        $flagshipDish = $this->flagshipDishRepository->findOneBy(['id' => $id]);
+    
+        if (!$flagshipDish) {
+            return new JsonResponse(['message' => 'Flagship dish not found'], 404);
+        }
+    
+        $restaurant = $this->entityManager->getRepository(Restaurant::class)->findOneBy(['id' => $data['restaurant']]);
+    
+        if (!$restaurant) {
+            return new JsonResponse(['message' => 'Restaurant not found'], 404);
+        }
+    
+        $flagshipDish->setLabel($data['label']);
+        $flagshipDish->setDescription($data['description']);
+        $flagshipDish->setPhoto($data['photo']);
+        $flagshipDish->setRestaurant($restaurant);
+    
+        $this->entityManager->flush();
+    
+        return new JsonResponse(['message' => 'Flagship updated'], 200);
+    }
 }

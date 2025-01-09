@@ -51,9 +51,16 @@ class Restaurant
         #[ORM\OneToMany(targetEntity: FlagshipDish::class, mappedBy: 'restaurant')]
         private Collection $flagshipDishes;
 
+        /**
+         * @var Collection<int, TagResto>
+         */
+        #[ORM\OneToMany(targetEntity: TagResto::class, mappedBy: 'restaurant')]
+        private Collection $tagRestos;
+
         public function __construct()
         {
             $this->flagshipDishes = new ArrayCollection();
+            $this->tagRestos = new ArrayCollection();
         }
 
     public function getId(): ?int
@@ -169,6 +176,36 @@ class Restaurant
             // set the owning side to null (unless already changed)
             if ($flagshipDish->getRestaurant() === $this) {
                 $flagshipDish->setRestaurant(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TagResto>
+     */
+    public function getTagRestos(): Collection
+    {
+        return $this->tagRestos;
+    }
+
+    public function addTagResto(TagResto $tagResto): static
+    {
+        if (!$this->tagRestos->contains($tagResto)) {
+            $this->tagRestos->add($tagResto);
+            $tagResto->setRestaurant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTagResto(TagResto $tagResto): static
+    {
+        if ($this->tagRestos->removeElement($tagResto)) {
+            // set the owning side to null (unless already changed)
+            if ($tagResto->getRestaurant() === $this) {
+                $tagResto->setRestaurant(null);
             }
         }
 

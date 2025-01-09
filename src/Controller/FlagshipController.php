@@ -99,4 +99,56 @@ class FlagshipController extends AbstractController
     {
         return $this->flagshipService->deleteFlagshipDish($id);
     }
+
+    #[OA\Post(
+        path: '/api/flagship/create',
+        summary: 'Create a flagship dish',
+        tags: ['Flagship'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                ref: new Model(type: FlagshipDish::class)
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'Flagship dish created successfully'
+            )
+        ]
+    )]
+    #[Route('/create', name: 'create', methods: ['POST'])]
+    public function create(Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        return $this->flagshipService->createFlagshipDish($data);
+    }
+
+    #[OA\Put(
+        path: '/api/flagship/update/{id}',
+        summary: 'Update a flagship dish',
+        tags: ['Flagship'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                ref: new Model(type: FlagshipDish::class)
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'Flagship dish updated successfully'
+            )
+        ]
+    )]
+    #[Route('/update/{id}', name: 'update', methods: ['PUT'])]
+    public function update(Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        $id = $request->attributes->get('id');
+
+        return $this->flagshipService->updateFlagshipDish($data, $id);
+    }
+
 }
