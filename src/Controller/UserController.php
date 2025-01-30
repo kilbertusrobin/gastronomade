@@ -36,7 +36,11 @@ class UserController extends AbstractController
     #[Route('', name: 'index', methods: ['GET'])]
     public function index(): JsonResponse
     {
-        return $this->userService->getUsers();
+        try {
+            return $this->userService->getUsers();
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 500);
+        }
     }
 
     #[OA\Get(
@@ -67,7 +71,11 @@ class UserController extends AbstractController
     #[Route('/{id}', name: 'read', methods: ['GET'])]
     public function read(int $id): JsonResponse
     {
-        return $this->userService->readUser($id);
+        try {
+            return $this->userService->readUser($id);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 500);
+        }
     }
 
     #[OA\Post(
@@ -93,8 +101,17 @@ class UserController extends AbstractController
     #[Route('/create', name: 'create', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
-        return $this->userService->createUser($data);
+        try {
+            $data = json_decode($request->getContent(), true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new \InvalidArgumentException('Invalid JSON format');
+            }
+            return $this->userService->createUser($data);
+        } catch (\InvalidArgumentException $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 400);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 500);
+        }
     }
 
     #[OA\Put(
@@ -129,8 +146,17 @@ class UserController extends AbstractController
     #[Route('/update/{id}', name: 'update', methods: ['PUT'])]
     public function update(int $id, Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
-        return $this->userService->updateUser($id, $data);
+        try {
+            $data = json_decode($request->getContent(), true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new \InvalidArgumentException('Invalid JSON format');
+            }
+            return $this->userService->updateUser($id, $data);
+        } catch (\InvalidArgumentException $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 400);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 500);
+        }
     }
 
     #[OA\Delete(
@@ -160,7 +186,11 @@ class UserController extends AbstractController
     #[Route('/delete/{id}', name: 'delete', methods: ['DELETE'])]
     public function delete(int $id): JsonResponse
     {
-        return $this->userService->deleteUser($id);
+        try {
+            return $this->userService->deleteUser($id);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 500);
+        }
     }
 
     #[OA\Post(
@@ -192,7 +222,16 @@ class UserController extends AbstractController
     #[Route('/login', name: 'login', methods: ['POST'])]
     public function login(Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
-        return $this->userService->login($data);
+        try {
+            $data = json_decode($request->getContent(), true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new \InvalidArgumentException('Invalid JSON format');
+            }
+            return $this->userService->login($data);
+        } catch (\InvalidArgumentException $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 400);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 500);
+        }
     }
 }

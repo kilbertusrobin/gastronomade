@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 use App\Service\FlagshipService;
-use App\Entity\FlagshipDish; // Assurez-vous que ce namespace est correct
+use App\Entity\FlagshipDish;
 
 #[Route('/api/flagship', name: 'flagship-')]
 class FlagshipController extends AbstractController
@@ -36,7 +36,11 @@ class FlagshipController extends AbstractController
     #[Route('', name: 'index', methods: ['GET'])]
     public function index(): JsonResponse
     {
-        return $this->flagshipService->getFlagshipDishes();
+        try {
+            return $this->flagshipService->getFlagshipDishes();
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 500);
+        }
     }
 
     #[OA\Get(
@@ -67,7 +71,11 @@ class FlagshipController extends AbstractController
     #[Route('/{id}', name: 'read', methods: ['GET'])]
     public function read(int $id): JsonResponse
     {
-        return $this->flagshipService->readFlagshipDish($id);
+        try {
+            return $this->flagshipService->readFlagshipDish($id);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 500);
+        }
     }
 
     #[OA\Delete(
@@ -97,7 +105,11 @@ class FlagshipController extends AbstractController
     #[Route('/delete/{id}', name: 'delete', methods: ['DELETE'])]
     public function delete(int $id): JsonResponse
     {
-        return $this->flagshipService->deleteFlagshipDish($id);
+        try {
+            return $this->flagshipService->deleteFlagshipDish($id);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 500);
+        }
     }
 
     #[OA\Post(
@@ -120,9 +132,12 @@ class FlagshipController extends AbstractController
     #[Route('/create', name: 'create', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
-
-        return $this->flagshipService->createFlagshipDish($data);
+        try {
+            $data = json_decode($request->getContent(), true);
+            return $this->flagshipService->createFlagshipDish($data);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 500);
+        }
     }
 
     #[OA\Put(
@@ -145,10 +160,12 @@ class FlagshipController extends AbstractController
     #[Route('/update/{id}', name: 'update', methods: ['PUT'])]
     public function update(Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
-        $id = $request->attributes->get('id');
-
-        return $this->flagshipService->updateFlagshipDish($data, $id);
+        try {
+            $data = json_decode($request->getContent(), true);
+            $id = $request->attributes->get('id');
+            return $this->flagshipService->updateFlagshipDish($data, $id);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 500);
+        }
     }
-
 }

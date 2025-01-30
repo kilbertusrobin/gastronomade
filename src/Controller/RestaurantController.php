@@ -9,7 +9,7 @@ use App\Service\RestaurantService;
 use Symfony\Component\HttpFoundation\Request;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
-use App\Entity\Restaurant; // Assurez-vous que ce namespace est correct
+use App\Entity\Restaurant;
 
 #[Route('/api/restaurant', name: 'app_restaurant-')]
 class RestaurantController extends AbstractController
@@ -36,7 +36,11 @@ class RestaurantController extends AbstractController
     #[Route('', name: 'index', methods: ['GET'])]
     public function index(): JsonResponse
     {
-        return $this->restaurantService->getRestaurants();
+        try {
+            return $this->restaurantService->getRestaurants();
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 500);
+        }
     }
 
     #[OA\Get(
@@ -67,7 +71,11 @@ class RestaurantController extends AbstractController
     #[Route('/{id}', name: 'show', methods: ['GET'])]
     public function show(int $id): JsonResponse
     {
-        return $this->restaurantService->getRestaurantById($id);
+        try {
+            return $this->restaurantService->getRestaurantById($id);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 500);
+        }
     }
 
     #[OA\Post(
@@ -93,8 +101,17 @@ class RestaurantController extends AbstractController
     #[Route('/create', name: 'create', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
-        return $this->restaurantService->createRestaurant($data);
+        try {
+            $data = json_decode($request->getContent(), true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new \InvalidArgumentException('Invalid JSON format');
+            }
+            return $this->restaurantService->createRestaurant($data);
+        } catch (\InvalidArgumentException $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 400);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 500);
+        }
     }
 
     #[OA\Put(
@@ -129,8 +146,17 @@ class RestaurantController extends AbstractController
     #[Route('/{id}/update', name: 'update', methods: ['PUT'])]
     public function update(int $id, Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
-        return $this->restaurantService->updateRestaurant($id, $data);
+        try {
+            $data = json_decode($request->getContent(), true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new \InvalidArgumentException('Invalid JSON format');
+            }
+            return $this->restaurantService->updateRestaurant($id, $data);
+        } catch (\InvalidArgumentException $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 400);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 500);
+        }
     }
 
     #[OA\Delete(
@@ -160,9 +186,12 @@ class RestaurantController extends AbstractController
     #[Route('/{id}/delete', name: 'delete', methods: ['DELETE'])]
     public function delete(int $id): JsonResponse
     {
-        return $this->restaurantService->deleteRestaurant($id);
+        try {
+            return $this->restaurantService->deleteRestaurant($id);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 500);
+        }
     }
-
 
     #[OA\Post(
         path: '/api/restaurant/tags',
@@ -200,8 +229,10 @@ class RestaurantController extends AbstractController
             }
             
             return $this->restaurantService->getRestaurantByTag($tagIds);
-        } catch (\Exception $e) {
+        } catch (\InvalidArgumentException $e) {
             return new JsonResponse(['error' => $e->getMessage()], 400);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 500);
         }
     }
 }

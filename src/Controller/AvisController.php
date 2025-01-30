@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 use App\Entity\Avis;
+use Exception;
 
 #[Route('/api/avis', name: 'app_avis-')]
 class AvisController extends AbstractController
@@ -36,7 +37,11 @@ class AvisController extends AbstractController
     #[Route('', name: 'index', methods: ['GET'])]
     public function index(): JsonResponse
     {
-        return $this->avisService->getAvis();
+        try {
+            return $this->avisService->getAvis();
+        } catch (Exception $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 500);
+        }
     }
 
     #[OA\Get(
@@ -67,7 +72,11 @@ class AvisController extends AbstractController
     #[Route('/{id}', name: 'show', methods: ['GET'])]
     public function show(int $id): JsonResponse
     {
-        return $this->avisService->readAvis($id);
+        try {
+            return $this->avisService->readAvis($id);
+        } catch (Exception $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 500);
+        }
     }
 
     #[OA\Post(
@@ -93,8 +102,12 @@ class AvisController extends AbstractController
     #[Route('/create', name: 'create', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
-        return $this->avisService->createAvis($data);
+        try {
+            $data = json_decode($request->getContent(), true);
+            return $this->avisService->createAvis($data);
+        } catch (Exception $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 500);
+        }
     }
 
     #[OA\Put(
@@ -129,8 +142,12 @@ class AvisController extends AbstractController
     #[Route('/update/{id}', name: 'update', methods: ['PUT'])]
     public function update(int $id, Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
-        return $this->avisService->updateAvis($id, $data);
+        try {
+            $data = json_decode($request->getContent(), true);
+            return $this->avisService->updateAvis($id, $data);
+        } catch (Exception $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 500);
+        }
     }
 
     #[OA\Delete(
@@ -160,6 +177,10 @@ class AvisController extends AbstractController
     #[Route('/delete/{id}', name: 'delete', methods: ['DELETE'])]
     public function delete(int $id): JsonResponse
     {
-        return $this->avisService->deleteAvis($id);
+        try {
+            return $this->avisService->deleteAvis($id);
+        } catch (Exception $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 500);
+        }
     }
 }
