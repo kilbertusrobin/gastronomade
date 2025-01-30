@@ -1,0 +1,25 @@
+meta {
+  name: Update avis
+  type: http
+  seq: 4
+}
+
+put {
+  url: http://127.0.0.1:8000/api/avis/update/{id}
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "content": "Le restaurant a amélioré son service, toujours aussi bon mais un peu plus rapide.",
+    "star_nb": 4,
+    "user": {
+      "id": 1
+    },
+    "restaurant": {
+      "id": 2
+    }
+  }
+  //Exemple
+}

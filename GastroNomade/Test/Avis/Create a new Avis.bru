@@ -1,0 +1,25 @@
+meta {
+  name: Create a new Avis
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://127.0.0.1:8000/api/avis/create
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "content": "Ce restaurant est génial, très bonne ambiance et repas délicieux !",
+    "star_nb": 5,
+    "user": {
+      "id": 1
+    },
+    "restaurant": {
+      "id": 2
+    }
+  }
+  //Exemple
+}
