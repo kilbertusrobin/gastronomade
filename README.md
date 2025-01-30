@@ -47,6 +47,12 @@ You can access the API documentation through:
 - Web interface: `http://localhost:8000/api/doc`
 - Bruno (integrated API client)
 
+## Tests
+
+- Tests were made by using PHPUnit
+- You can run them by using : 'php bin/phpunit' in the Terminal
+
+
 ## Additional Information
 
 - The application will run by default on `http://localhost:8000`
