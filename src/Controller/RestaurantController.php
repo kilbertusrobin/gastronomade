@@ -162,4 +162,46 @@ class RestaurantController extends AbstractController
     {
         return $this->restaurantService->deleteRestaurant($id);
     }
+
+
+    #[OA\Post(
+        path: '/api/restaurant/tags',
+        summary: 'Get restaurants by tags',
+        tags: ['Restaurant'],
+        requestBody: new OA\RequestBody(
+            description: 'Array of tag IDs',
+            required: true,
+            content: new OA\JsonContent(
+                type: 'array',
+                items: new OA\Items(type: 'integer')
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Returns the list of restaurants with the specified tags',
+                content: new OA\JsonContent(type: 'array', items: new OA\Items(ref: new Model(type: Restaurant::class, groups: ['list_restaurants'])))
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Invalid input'
+            )
+        ]
+    )]
+    #[Route('/tags', name: 'tags', methods: ['POST'])]
+    public function getRestaurantByTags(Request $request): JsonResponse
+    {
+        try {
+            $content = $request->getContent();
+            $tagIds = json_decode($content, true);
+            
+            if (!is_array($tagIds)) {
+                throw new \InvalidArgumentException('Invalid JSON format. Expected array of tag IDs');
+            }
+            
+            return $this->restaurantService->getRestaurantByTag($tagIds);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 400);
+        }
+    }
 }
