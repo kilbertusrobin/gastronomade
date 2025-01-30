@@ -1,8 +1,8 @@
 nelmio_api_doc:
     documentation:
         info:
-            title: 'API Documentation'
-            description: 'This is the API documentation for your project.'
+            title: "Documentation de l'API Gastronomade"
+            description: "Ici vous trouverez toutes les routes pour utiliser l'API du site Gastronomade"
             version: '1.0.0'
     areas:
         default:
@@ -15,4 +15,3 @@ nelmio_api_doc:
             path_patterns: [ '^/api/restaurant' ]
         flagship:
             path_patterns: [ '^/api/flagship' ]
-
