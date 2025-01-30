@@ -1,0 +1,16 @@
+meta {
+  name: Gets all Restaurant by Tags array
+  type: http
+  seq: 6
+}
+
+get {
+  url: http://127.0.0.1:8000/api/restaurant/tags
+  body: json
+  auth: none
+}
+
+body:json {
+  [1,2]
+  //Exemple
+}

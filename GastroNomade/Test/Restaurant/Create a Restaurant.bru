@@ -1,0 +1,24 @@
+meta {
+  name: Create a Restaurant
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://127.0.0.1:8000/api/restaurant/create
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Le Gourmet",
+    "city": "Paris",
+    "postalCode": "75001",
+    "adress": "12 rue de la Paix",
+    "phone": "+33 1 23 45 67 89",
+    "lat": 48.8566,
+    "longitude": 2.3522
+  }
+  //Exemple
+}

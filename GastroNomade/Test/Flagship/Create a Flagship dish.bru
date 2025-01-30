@@ -1,0 +1,23 @@
+meta {
+  name: Create a Flagship dish
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://127.0.0.1:8000/api/flagship/create
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "id": 0,
+    "restaurant": "string",
+    "label": "string",
+    "description": "string",
+    "photo": "string"
+  }
+  
+  //Exemple
+}

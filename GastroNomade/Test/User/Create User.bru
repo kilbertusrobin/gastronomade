@@ -1,0 +1,29 @@
+meta {
+  name: Create User
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://127.0.0.1:8000/api/user/create
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "id": 0,
+    "firstName": "string",
+    "lastName": "string",
+    "userName": "string",
+    "password": "string",
+    "typeUser": {
+      "id": 0,
+      "label": "string",
+      "users": [
+        "string"
+      ]
+    }
+  }
+  //Exemple
+}
