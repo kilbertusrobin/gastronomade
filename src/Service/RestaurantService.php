@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Repository\RestaurantRepository;
 use App\Entity\Restaurant;
+use App\Entity\Avis;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -28,6 +29,21 @@ class RestaurantService
     
         $restaurantData = [];
         foreach ($restaurants as $restaurant) {
+            $tags = $restaurant->getTagRestos()->toArray();
+            $tagsData = array_map(function ($tagResto) {
+                return $tagResto->getTag()->getLabel();
+            }, $tags);
+
+            $avis = $this->entityManager->getRepository(Avis::class)->findBy(['restaurant' => $restaurant->getId()]);
+            $avisData = array_map(function ($avis) {
+                return [
+                    'id' => $avis->getId(),
+                    'content' => $avis->getContent(),
+                    'starNb' => $avis->getStarNb(),
+                    'user' => $avis->getUser()->getUsername(),
+                ];
+            }, $avis);
+    
             $restaurantData[] = [
                 'id' => $restaurant->getId(),
                 'name' => $restaurant->getName(),
@@ -37,6 +53,8 @@ class RestaurantService
                 'phone' => $restaurant->getPhone(),
                 'lat' => $restaurant->getLat(),
                 'longitude' => $restaurant->getLongitude(),
+                'tags' => $tagsData,
+                'avis' => $avisData,
             ];
         }
     
@@ -44,6 +62,7 @@ class RestaurantService
     
         return new JsonResponse($data, 200, [], true);
     }
+    
 
     public function getRestaurantById(int $id): JsonResponse
     {
@@ -63,6 +82,21 @@ class RestaurantService
             ];
         }, $flagshipDishes);
     
+        $tags = $restaurant->getTagRestos()->toArray();
+        $tagsData = array_map(function ($tagResto) {
+            return $tagResto->getTag()->getLabel();
+        }, $tags);
+
+        $avis = $this->entityManager->getRepository(Avis::class)->findBy(['restaurant' => $restaurant->getId()]);
+        $avisData = array_map(function ($avis) {
+            return [
+                'id' => $avis->getId(),
+                'content' => $avis->getContent(),
+                'starNb' => $avis->getStarNb(),
+                'user' => $avis->getUser()->getUsername(),
+            ];
+        }, $avis);
+    
         $restaurantData = [
             'id' => $restaurant->getId(),
             'name' => $restaurant->getName(),
@@ -73,12 +107,55 @@ class RestaurantService
             'lat' => $restaurant->getLat(),
             'longitude' => $restaurant->getLongitude(),
             'flagshipDishes' => $flagshipDishesData,
+            'tags' => $tagsData,
+            'avis' => $avisData,
         ];
     
         $data = $this->serializer->serialize($restaurantData, 'json');
     
         return new JsonResponse($data, 200, [], true);
     }
+
+    public function getRestaurantByTag(array $tags): JsonResponse
+    {
+        $allRestaurants = $this->restaurantRepository->findAll();
+        $matchingRestaurants = [];
+    
+        foreach ($allRestaurants as $restaurant) {
+            $restaurantTags = $restaurant->getTagRestos();
+            
+            foreach ($restaurantTags as $tagResto) {
+                if (in_array($tagResto->getTag()->getId(), $tags)) {
+                    $tagsData = array_map(function ($tagResto) {
+                        return $tagResto->getTag()->getLabel();
+                    }, $restaurant->getTagRestos()->toArray());
+    
+                    $restaurantData = [
+                        'id' => $restaurant->getId(),
+                        'name' => $restaurant->getName(),
+                        'city' => $restaurant->getCity(),
+                        'postalCode' => $restaurant->getPostalCode(),
+                        'adress' => $restaurant->getAdress(),
+                        'phone' => $restaurant->getPhone(),
+                        'lat' => $restaurant->getLat(),
+                        'longitude' => $restaurant->getLongitude(),
+                        'tags' => $tagsData,
+                    ];
+    
+                    $matchingRestaurants[$restaurant->getId()] = $restaurantData;
+                    
+                    break;
+                }
+            }
+        }
+    
+        $matchingRestaurants = array_values($matchingRestaurants);
+    
+        $data = $this->serializer->serialize($matchingRestaurants, 'json');
+    
+        return new JsonResponse($data, 200, [], true);
+    }
+    
     
 
     public function createRestaurant(array $data): JsonResponse
