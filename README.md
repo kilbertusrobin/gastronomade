@@ -52,7 +52,6 @@ You can access the API documentation through:
 - Tests were made by using PHPUnit
 - You can run them by using : 'php bin/phpunit' in the Terminal
 
-
 ## Additional Information
 
 - The application will run by default on `http://localhost:8000`
